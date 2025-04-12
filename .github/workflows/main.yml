@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Install NPM dependencies
+        run: npm install
       - run: npm run format-check
   test:
     name: Test
@@ -31,4 +33,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Install NPM dependencies
+        run: npm install
       - run: npm run test
