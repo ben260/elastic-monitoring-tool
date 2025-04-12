@@ -1,20 +1,34 @@
-name: Build Next.js web application
+name: Build, test and check formatting
 on:
   push:
-    branches: ["main"]
+    branches: ['main']
   pull_request:
     branches:
-      - "main"
-      - "feature/*"
-      - "fix/*"
+      - 'main'
+      - 'feature/*'
+      - 'fix/*'
 jobs:
-    build:
-        name: Build
-        runs-on: ubuntu-latest
-        steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
-        - name: Install NPM dependencies
-          run: npm install
-        - name: Build project
-          run: npm run build
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install NPM dependencies
+        run: npm install
+      - name: Build project
+        run: npm run build
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - run: npm run format-check
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - run: npm run test
