@@ -1,4 +1,4 @@
-import client from '@/lib/elastic';
+
 import { ReactNode } from 'react';
 import {
   IndicesGetDataStreamResponse,
@@ -7,6 +7,9 @@ import {
 import { columns } from './columns';
 import { DataStreamTableItem, Priority } from '../types';
 import { DataStreamTable } from './Table';
+
+export const dynamic = 'force-dynamic';
+import client from '@/lib/elastic';
 
 export default async function Page(): Promise<React.ReactNode> {
   let data: DataStreamTableItem[];
@@ -115,4 +118,3 @@ export default async function Page(): Promise<React.ReactNode> {
   );
 }
 
-export const dynamic = 'force-dynamic';
