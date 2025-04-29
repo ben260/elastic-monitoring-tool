@@ -1,51 +1,37 @@
 import client from '@/lib/elastic';
-import { DataTable, Priority } from './Table';
 import { ReactNode } from 'react';
 import {
   IndicesGetDataStreamResponse,
-  IndicesDataStream,
+  WatcherGetWatchResponse,
 } from '../../../node_modules/@elastic/elasticsearch/lib/api/types';
 import { columns } from './columns';
-
-export type DataStreamTableItem = IndicesDataStream & {
-  priority: Priority;
-  colour: ReactNode;
-};
-
-// .metrics-endpoint.metadata_united_default/_search
+import { DataStreamTableItem, Priority } from '../types';
+import { DataStreamTable } from './Table';
 
 export default async function Page(): Promise<React.ReactNode> {
   let data: DataStreamTableItem[];
-  let highWatcherIndices: string[];
-  let mediumWatcherIndices: string[];
-  let lowWatcherIndices: string[];
+  let highWatcher: WatcherGetWatchResponse;
+  let mediumWatcher: WatcherGetWatchResponse;
+  let lowWatcher: WatcherGetWatchResponse;
   try {
+    highWatcher = await client.watcher.getWatch({
+      id: process.env.HIGH_DATASTREAM_WATCHER_ID ?? '',
+    });
+    mediumWatcher = await client.watcher.getWatch({
+      id: process.env.MEDIUM_DATASTREAM_WATCHER_ID ?? '',
+    });
+    lowWatcher = await client.watcher.getWatch({
+      id: process.env.LOW_DATASTREAM_WATCHER_ID ?? '',
+    });
+
     const dataStreams: IndicesGetDataStreamResponse =
       await client.indices.getDataStream({ name: '*' });
-
-    highWatcherIndices =
-      (
-        await client.watcher.getWatch({
-          id: process.env.HIGH_DATASTREAM_WATCHER_ID ?? '',
-        })
-      ).watch?.input.search?.request.indices ?? [];
-    mediumWatcherIndices =
-      (
-        await client.watcher.getWatch({
-          id: process.env.MEDIUM_DATASTREAM_WATCHER_ID ?? '',
-        })
-      ).watch?.input.search?.request.indices ?? [];
-    lowWatcherIndices =
-      (
-        await client.watcher.getWatch({
-          id: process.env.LOW_DATASTREAM_WATCHER_ID ?? '',
-        })
-      ).watch?.input.search?.request.indices ?? [];
 
     data = dataStreams.data_streams.map((stream) => {
       let colour: ReactNode = <></>;
       let priority: Priority;
 
+      // Find data stream status
       switch (stream.status) {
         case 'GREEN':
           colour = (
@@ -82,14 +68,21 @@ export default async function Page(): Promise<React.ReactNode> {
           break;
       }
 
+      // Find data stream priority.
       switch (true) {
-        case highWatcherIndices.includes(stream.name):
+        case highWatcher.watch?.input.search?.request.indices?.includes(
+          stream.name,
+        ):
           priority = 'High';
           break;
-        case mediumWatcherIndices.includes(stream.name):
+        case mediumWatcher.watch?.input.search?.request.indices?.includes(
+          stream.name,
+        ):
           priority = 'Medium';
           break;
-        case lowWatcherIndices.includes(stream.name):
+        case lowWatcher.watch?.input.search?.request.indices?.includes(
+          stream.name,
+        ):
           priority = 'Low';
           break;
         default:
@@ -111,12 +104,12 @@ export default async function Page(): Promise<React.ReactNode> {
           View and set the priorities for data streams
         </p>
       </div>
-      <DataTable
+      <DataStreamTable
         data={data}
         columns={columns}
-        highWatcherIndices={highWatcherIndices}
-        mediumWatcherIndices={mediumWatcherIndices}
-        lowWatcherIndices={lowWatcherIndices}
+        highWatcher={highWatcher}
+        mediumWatcher={mediumWatcher}
+        lowWatcher={lowWatcher}
       />
     </div>
   );

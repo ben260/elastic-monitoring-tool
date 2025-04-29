@@ -28,16 +28,9 @@ import {
 } from '@/components/ui/select';
 import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
-import { priorities, Priority } from './Table';
-import { DataStreamTableItem } from './page';
 import dynamic from 'next/dynamic';
-
-/*export type DataStream = {
-    name: string;
-    priority: string;
-    status: ReactNode;
-    full: any;
-}*/
+import { DataStreamTableItem, Priority } from '../types';
+import { priorities } from '../constants';
 
 export const columns: ColumnDef<DataStreamTableItem>[] = [
   {

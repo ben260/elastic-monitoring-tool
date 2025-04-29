@@ -1,5 +1,4 @@
 'use client';
-
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -10,6 +9,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { toast } from 'sonner';
 
 import {
   Table,
@@ -43,48 +43,33 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { DataStreamTableItem } from './page';
-import { findAdded, findRemoved } from '@/lib/utils';
+import { findChanges, generatePutWatcherRequest } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-export type Priority = 'High' | 'Medium' | 'Low' | 'Unset';
-export type Change = '+' | '-';
-
-// remove colours?
-export const priorities: { label: string; value: Priority; colour: string }[] =
-  [
-    //{ label: "All", value: "All", colour: "text-gray-700" },
-    { label: 'High', value: 'High', colour: 'text-orange-600' },
-    { label: 'Medium', value: 'Medium', colour: 'text-yellow-600' },
-    { label: 'Low', value: 'Low', colour: 'text-green-600' },
-    { label: 'Unset', value: 'Unset', colour: 'text-green-600' },
-  ];
-
-interface DataTableProps<TData, TValue> {
+import { WatcherGetWatchResponse } from '../../../node_modules/@elastic/elasticsearch/lib/api/types';
+import { Change, DataStreamTableItem, Priority, TabEntry } from '../types';
+import { priorities } from '../constants';
+import { ClipboardCopyIcon } from 'lucide-react';
+interface DataStreamTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  highWatcherIndices: string[];
-  mediumWatcherIndices: string[];
-  lowWatcherIndices: string[];
+  highWatcher: WatcherGetWatchResponse;
+  mediumWatcher: WatcherGetWatchResponse;
+  lowWatcher: WatcherGetWatchResponse;
 }
 
-export function DataTable<TData extends DataStreamTableItem, TValue>({
+export function DataStreamTable<TData extends DataStreamTableItem, TValue>({
   columns,
   data,
-  highWatcherIndices,
-  mediumWatcherIndices,
-  lowWatcherIndices,
-}: DataTableProps<TData, TValue>) {
+  highWatcher,
+  mediumWatcher,
+  lowWatcher,
+}: DataStreamTableProps<TData, TValue>) {
   const currentPriorityMap = new Map<string, Priority>(
     new Map(data.map((item) => [item.name, item.priority])),
   );
 
-  //const updatedPriorityMap = new Map(currentPriorityMap);
   const [updatedPriorityMap, setUpdatedPriorityMap] =
     useState<Map<string, Priority>>(currentPriorityMap);
-  //const highWatcherChangesMap = new Map<string, Change>();
-  //const mediumWatcherChangesMap = new Map<string, Change>();
-  //const lowWatcherChangesMap = new Map<string, Change>();
 
   const [highWatcherChangesMap, setHighWatcherChangesMap] = useState<
     Map<string, Change>
@@ -117,75 +102,57 @@ export function DataTable<TData extends DataStreamTableItem, TValue>({
     },
     meta: {
       updatePriority(id: string, priority: Priority) {
-        //updatedPriorityMap.set(id, priority);
-
-        //console.log(updatedPriorityMap);
+        //Update data stream priority and calculate new changes
         setUpdatedPriorityMap(new Map(updatedPriorityMap.set(id, priority)));
         this.updateWatcherChanges();
-        // combine these functions if they do the same thing?
       },
       updateWatcherChanges() {
-        // update high watcher changes
-        const highAdded = findAdded(
-          new Map(highWatcherIndices.map((item) => [item, 'High'])),
-          new Map(
-            Array.from(updatedPriorityMap.entries()).filter(
-              ([, priority]) => priority === 'High',
+        setHighWatcherChangesMap(
+          findChanges(
+            new Map(
+              highWatcher.watch?.input.search?.request.indices?.map((item) => [
+                item,
+                'High',
+              ]),
             ),
-          ),
-        );
-        const highRemoved = findRemoved(
-          new Map(highWatcherIndices.map((item) => [item, 'High'])),
-          new Map(
-            Array.from(updatedPriorityMap.entries()).filter(
-              ([, priority]) => priority === 'High',
+            new Map(
+              Array.from(updatedPriorityMap.entries()).filter(
+                ([, priority]) => priority === 'High',
+              ),
             ),
           ),
         );
 
-        // [...highAdded, ...highRemoved].map(([key, change]) => highWatcherChangesMap.set(key, change));
-        setHighWatcherChangesMap(new Map([...highAdded, ...highRemoved]));
+        setMediumWatcherChangesMap(
+          findChanges(
+            new Map(
+              mediumWatcher.watch?.input.search?.request.indices?.map(
+                (item) => [item, 'Medium'],
+              ),
+            ),
+            new Map(
+              Array.from(updatedPriorityMap.entries()).filter(
+                ([, priority]) => priority === 'Medium',
+              ),
+            ),
+          ),
+        );
 
-        // update medium watcher changes
-        const mediumAdded = findAdded(
-          new Map(mediumWatcherIndices.map((item) => [item, 'Medium'])),
-          new Map(
-            Array.from(updatedPriorityMap.entries()).filter(
-              ([, priority]) => priority === 'Medium',
+        setLowWatcherChangesMap(
+          findChanges(
+            new Map(
+              lowWatcher.watch?.input.search?.request.indices?.map((item) => [
+                item,
+                'Low',
+              ]),
+            ),
+            new Map(
+              Array.from(updatedPriorityMap.entries()).filter(
+                ([, priority]) => priority === 'Low',
+              ),
             ),
           ),
         );
-        const mediumRemoved = findRemoved(
-          new Map(mediumWatcherIndices.map((item) => [item, 'Medium'])),
-          new Map(
-            Array.from(updatedPriorityMap.entries()).filter(
-              ([, priority]) => priority === 'Medium',
-            ),
-          ),
-        );
-        setMediumWatcherChangesMap(new Map([...mediumAdded, ...mediumRemoved]));
-
-        // [...mediumAdded, ...mediumRemoved].map(([key, change]) => mediumWatcherChangesMap.set(key, change));
-        // update low watcher changes
-        const lowAdded = findAdded(
-          new Map(lowWatcherIndices.map((item) => [item, 'Low'])),
-          new Map(
-            Array.from(updatedPriorityMap.entries()).filter(
-              ([, priority]) => priority === 'Low',
-            ),
-          ),
-        );
-        const lowRemoved = findRemoved(
-          new Map(lowWatcherIndices.map((item) => [item, 'Low'])),
-          new Map(
-            Array.from(updatedPriorityMap.entries()).filter(
-              ([, priority]) => priority === 'Low',
-            ),
-          ),
-        );
-        //[...lowAdded, ...lowRemoved].map(([key, change]) => setLowWatcherChangesMap(new Map(prevMap).set(key, change)));
-
-        setLowWatcherChangesMap(new Map([...lowAdded, ...lowRemoved]));
       },
     },
   });
@@ -205,11 +172,13 @@ export function DataTable<TData extends DataStreamTableItem, TValue>({
         <div className='mx-3 flex items-center space-x-2'>
           <Label htmlFor='terms'>Priority</Label>
           <Select
-            onValueChange={(value) =>
+            onValueChange={(value) => {
               table
                 .getColumn('priority')
-                ?.setFilterValue(value === 'All' ? '' : value)
-            }
+                ?.setFilterValue(value === 'All' ? '' : value);
+              setUpdatedPriorityMap(new Map(currentPriorityMap)); //reset updates in progress.
+              table.options.meta?.updateWatcherChanges();
+            }}
           >
             <SelectTrigger className='mx-2 w-[180px]'>
               <SelectValue placeholder='All' />
@@ -235,128 +204,108 @@ export function DataTable<TData extends DataStreamTableItem, TValue>({
                 className='mx-2'
                 variant='outline'
                 disabled={
-                  highWatcherChangesMap.size == 0 ||
-                  mediumWatcherChangesMap.size == 0 ||
+                  highWatcherChangesMap.size == 0 &&
+                  mediumWatcherChangesMap.size == 0 &&
                   lowWatcherChangesMap.size == 0
                 }
               >
                 View Updates
               </Button>
             </DialogTrigger>
-            <DialogContent className='h-screen min-w-fit'>
+            <DialogContent className='flex h-screen max-w-96 min-w-96 flex-col justify-start overflow-auto'>
               <DialogHeader>
                 <DialogTitle>Updated Watcher Config</DialogTitle>
                 <DialogDescription>View changes</DialogDescription>
               </DialogHeader>
-              <div className='w-full'>
-                <Tabs defaultValue='high' className='w-full'>
-                  <TabsList className='grid w-full grid-cols-3'>
-                    <TabsTrigger value='high'>High</TabsTrigger>
-                    <TabsTrigger value='medium'>Medium</TabsTrigger>
-                    <TabsTrigger value='low'>Low</TabsTrigger>
+              <div className='flex w-full'>
+                <Tabs defaultValue='High' className='w-full'>
+                  <TabsList className='top-0 grid w-full grid-cols-3'>
+                    <TabsTrigger value='High'>High</TabsTrigger>
+                    <TabsTrigger value='Medium'>Medium</TabsTrigger>
+                    <TabsTrigger value='Low'>Low</TabsTrigger>
                   </TabsList>
-                  <TabsContent value='high'>
-                    <table className='min-w-full border-collapse'>
-                      <thead>
-                        <tr className='bg-gray-200'>
-                          <th className='border px-4 py-2'>Key</th>
-                          <th className='border px-4 py-2'>Change</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Array.from(highWatcherChangesMap.entries()).map(
-                          ([key, change]) => (
-                            <tr
-                              key={key}
-                              className={
-                                change === '+'
-                                  ? 'bg-green-100'
-                                  : change === '-'
-                                    ? 'bg-red-100'
-                                    : ''
-                              }
-                            >
-                              <td className='border px-4 py-2'>{key}</td>
-                              <td className='border px-4 py-2'>{change}</td>
-                            </tr>
-                          ),
+                  {(
+                    [
+                      ['High', highWatcherChangesMap, highWatcher],
+                      ['Medium', mediumWatcherChangesMap, mediumWatcher],
+                      ['Low', lowWatcherChangesMap, lowWatcher],
+                    ] as TabEntry
+                  ).map(([priority, changesMap, watcher]) => {
+                    return (
+                      <TabsContent key={priority} value={priority as string}>
+                        {changesMap.size == 0 ? (
+                          <div>No changes</div>
+                        ) : (
+                          <div>
+                            <h1>Updates</h1>
+                            <div className='max-h-60 overflow-auto'>
+                              <Table>
+                                <TableHeader>
+                                  <TableRow>
+                                    <TableHead className='w-[100px]'>
+                                      Name
+                                    </TableHead>
+                                    <TableHead className='text-right'>
+                                      Change
+                                    </TableHead>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {Array.from(changesMap.entries()).map(
+                                    ([key, change]) => (
+                                      <TableRow
+                                        key={key}
+                                        className={
+                                          change === '+'
+                                            ? 'bg-green-100 hover:bg-green-100'
+                                            : change === '-'
+                                              ? 'bg-red-100 hover:bg-red-100'
+                                              : ''
+                                        }
+                                      >
+                                        <TableCell className='font-medium'>
+                                          {key}
+                                        </TableCell>
+                                        <TableCell className='text-right'>
+                                          {change}
+                                        </TableCell>
+                                      </TableRow>
+                                    ),
+                                  )}
+                                </TableBody>
+                              </Table>
+                            </div>
+
+                            <h1>Updated Watcher</h1>
+                            <div className='relative'>
+                              <pre className='max-h-96 overflow-auto rounded bg-gray-100 p-4 font-mono text-sm whitespace-pre-wrap'>
+                                <Button
+                                  className='absolute top-2 right-5 p-2'
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(
+                                      generatePutWatcherRequest(
+                                        watcher,
+                                        updatedPriorityMap,
+                                      ),
+                                    );
+                                    toast('Copied to clipboard');
+                                  }}
+                                >
+                                  <ClipboardCopyIcon size={40} />
+                                </Button>
+                                {generatePutWatcherRequest(
+                                  watcher,
+                                  updatedPriorityMap,
+                                )}{' '}
+                              </pre>
+                            </div>
+                          </div>
                         )}
-                      </tbody>
-                    </table>
-                    Data streams for updated watcher
-                    {Array.from(updatedPriorityMap.entries()).filter(
-                      ([, priority]) => priority === 'High',
-                    )}
-                  </TabsContent>
-                  <TabsContent value='medium'>
-                    <table className='min-w-full border-collapse'>
-                      <thead>
-                        <tr className='bg-gray-200'>
-                          <th className='border px-4 py-2'>Key</th>
-                          <th className='border px-4 py-2'>Change</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Array.from(mediumWatcherChangesMap.entries()).map(
-                          ([key, change]) => (
-                            <tr
-                              key={key}
-                              className={
-                                change === '+'
-                                  ? 'bg-green-100'
-                                  : change === '-'
-                                    ? 'bg-red-100'
-                                    : ''
-                              }
-                            >
-                              <td className='border px-4 py-2'>{key}</td>
-                              <td className='border px-4 py-2'>{change}</td>
-                            </tr>
-                          ),
-                        )}
-                      </tbody>
-                    </table>
-                    Data streams for updated watcher
-                    {Array.from(updatedPriorityMap.entries()).filter(
-                      ([, priority]) => priority === 'Medium',
-                    )}
-                  </TabsContent>
-                  <TabsContent value='low'>
-                    <table className='min-w-full border-collapse'>
-                      <thead>
-                        <tr className='bg-gray-200'>
-                          <th className='border px-4 py-2'>Key</th>
-                          <th className='border px-4 py-2'>Change</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Array.from(lowWatcherChangesMap.entries()).map(
-                          ([key, change]) => (
-                            <tr
-                              key={key}
-                              className={
-                                change === '+'
-                                  ? 'bg-green-100'
-                                  : change === '-'
-                                    ? 'bg-red-100'
-                                    : ''
-                              }
-                            >
-                              <td className='border px-4 py-2'>{key}</td>
-                              <td className='border px-4 py-2'>{change}</td>
-                            </tr>
-                          ),
-                        )}
-                      </tbody>
-                    </table>
-                    Data streams for updated watcher
-                    {Array.from(updatedPriorityMap.entries()).filter(
-                      ([, priority]) => priority === 'Low',
-                    )}
-                  </TabsContent>
+                      </TabsContent>
+                    );
+                  })}
                 </Tabs>
               </div>
-
               <DialogFooter className='sm:justify-start'>
                 <DialogClose asChild>
                   <Button type='button' variant='secondary'>
@@ -379,9 +328,9 @@ export function DataTable<TData extends DataStreamTableItem, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}

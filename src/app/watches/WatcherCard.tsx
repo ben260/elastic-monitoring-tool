@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-//import ReactJson from "react-json-view";
 import {
   Dialog,
   DialogClose,
@@ -19,7 +18,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Priority } from '../data-streams/Table';
+import { Priority } from '../types';
 
 type WatcherCardProps = {
   name: string;
