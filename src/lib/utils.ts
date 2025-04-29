@@ -83,3 +83,6 @@ export function generatePutWatcherRequest(
 }
 
 // edge case turn pages needs to reset changes??????
+
+
+export function add(x:number,y:number){return x+y}
