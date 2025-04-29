@@ -1,4 +1,3 @@
-
 import { ReactNode } from 'react';
 import {
   IndicesGetDataStreamResponse,
@@ -7,8 +6,6 @@ import {
 import { columns } from './columns';
 import { DataStreamTableItem, Priority } from '../types';
 import { DataStreamTable } from './Table';
-
-export const dynamic = 'force-dynamic';
 import client from '@/lib/elastic';
 
 export default async function Page(): Promise<React.ReactNode> {
@@ -16,7 +13,9 @@ export default async function Page(): Promise<React.ReactNode> {
   let highWatcher: WatcherGetWatchResponse;
   let mediumWatcher: WatcherGetWatchResponse;
   let lowWatcher: WatcherGetWatchResponse;
+
   try {
+    if (!client) throw new Error('Elastic error');
     highWatcher = await client.watcher.getWatch({
       id: process.env.HIGH_DATASTREAM_WATCHER_ID ?? '',
     });
@@ -117,4 +116,3 @@ export default async function Page(): Promise<React.ReactNode> {
     </div>
   );
 }
-

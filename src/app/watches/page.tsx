@@ -15,6 +15,9 @@ export default async function Page() {
 
   try {
     // Data Stream Watches
+    if (!client) {
+      return <></>;
+    }
     dsHigh = await client.watcher.getWatch({
       id: process.env.HIGH_DATASTREAM_WATCHER_ID ?? '',
     });
@@ -54,4 +57,3 @@ export default async function Page() {
   );
 }
 
-export const dynamic = 'force-dynamic';
