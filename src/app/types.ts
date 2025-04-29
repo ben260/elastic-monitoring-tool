@@ -9,6 +9,7 @@ declare module '@tanstack/table-core' {
     _?: TData;
     updatePriority: (id: string, priority: Priority) => void;
     updateWatcherChanges: () => void;
+    resetChanges: () => void;
   }
 }
 

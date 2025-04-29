@@ -43,7 +43,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { findChanges, generatePutWatcherRequest } from '@/lib/utils';
+import { findChanges, generateDataStreamPutWatcherRequest } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WatcherGetWatchResponse } from '../../../node_modules/@elastic/elasticsearch/lib/api/types';
 import { Change, DataStreamTableItem, Priority, TabEntry } from '../types';
@@ -109,50 +109,34 @@ export function DataStreamTable<TData extends DataStreamTableItem, TValue>({
       updateWatcherChanges() {
         setHighWatcherChangesMap(
           findChanges(
-            new Map(
-              highWatcher.watch?.input.search?.request.indices?.map((item) => [
-                item,
-                'High',
-              ]),
-            ),
-            new Map(
-              Array.from(updatedPriorityMap.entries()).filter(
-                ([, priority]) => priority === 'High',
-              ),
-            ),
+            highWatcher.watch?.input.search?.request.indices || [],
+            Array.from(updatedPriorityMap.entries())
+              .filter(([, priority]) => priority === 'High')
+              .map(([name]) => name),
           ),
         );
 
         setMediumWatcherChangesMap(
           findChanges(
-            new Map(
-              mediumWatcher.watch?.input.search?.request.indices?.map(
-                (item) => [item, 'Medium'],
-              ),
-            ),
-            new Map(
-              Array.from(updatedPriorityMap.entries()).filter(
-                ([, priority]) => priority === 'Medium',
-              ),
-            ),
+            mediumWatcher.watch?.input.search?.request.indices || [],
+            Array.from(updatedPriorityMap.entries())
+              .filter(([, priority]) => priority === 'Medium')
+              .map(([name]) => name),
           ),
         );
 
         setLowWatcherChangesMap(
           findChanges(
-            new Map(
-              lowWatcher.watch?.input.search?.request.indices?.map((item) => [
-                item,
-                'Low',
-              ]),
-            ),
-            new Map(
-              Array.from(updatedPriorityMap.entries()).filter(
-                ([, priority]) => priority === 'Low',
-              ),
-            ),
+            lowWatcher.watch?.input.search?.request.indices || [],
+            Array.from(updatedPriorityMap.entries())
+              .filter(([, priority]) => priority === 'Low')
+              .map(([name]) => name),
           ),
         );
+      },
+      resetChanges() {
+        setUpdatedPriorityMap(new Map(currentPriorityMap));
+        table.options.meta?.updateWatcherChanges();
       },
     },
   });
@@ -176,8 +160,6 @@ export function DataStreamTable<TData extends DataStreamTableItem, TValue>({
               table
                 .getColumn('priority')
                 ?.setFilterValue(value === 'All' ? '' : value);
-              setUpdatedPriorityMap(new Map(currentPriorityMap)); //reset updates in progress.
-              table.options.meta?.updateWatcherChanges();
             }}
           >
             <SelectTrigger className='mx-2 w-[180px]'>
@@ -283,7 +265,8 @@ export function DataStreamTable<TData extends DataStreamTableItem, TValue>({
                                   className='absolute top-2 right-5 p-2'
                                   onClick={() => {
                                     navigator.clipboard.writeText(
-                                      generatePutWatcherRequest(
+                                      generateDataStreamPutWatcherRequest(
+                                        priority,
                                         watcher,
                                         updatedPriorityMap,
                                       ),
@@ -293,7 +276,8 @@ export function DataStreamTable<TData extends DataStreamTableItem, TValue>({
                                 >
                                   <ClipboardCopyIcon size={40} />
                                 </Button>
-                                {generatePutWatcherRequest(
+                                {generateDataStreamPutWatcherRequest(
+                                  priority,
                                   watcher,
                                   updatedPriorityMap,
                                 )}{' '}

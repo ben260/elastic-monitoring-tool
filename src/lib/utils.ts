@@ -8,17 +8,18 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Doc string
- * @param names - An array of data stream names
- * @returns A promise that resolves to an array of priority objects.
+ * Finds which items were added in the updated list compared to the original.
+ * @param {string[]} list1 - The original list.
+ * @param {string[]} list2 - The updated list.
+ * @returns An array of tuples representing added items and a '+' change.
  */
 export function findAdded(
-  map1: Map<string, Priority>, // original list
-  map2: Map<string, Priority>, // updated list
+  list1: string[], // original list
+  list2: string[], // updated list
 ): [string, Change][] {
   const added: [string, Change][] = [];
-  map2.forEach((_, name) => {
-    if (!map1.has(name)) {
+  list2.map((name) => {
+    if (!list1.includes(name)) {
       added.push([name, '+']);
     }
   });
@@ -26,17 +27,18 @@ export function findAdded(
 }
 
 /**
- * Doc string
- * @param names - An array of data stream names
- * @returns A promise that resolves to an array of priority objects.
+ * Finds which items were removed in the updated list compared to the original.
+ * @param {string[]} list1 - The original list.
+ * @param {string[]} list2 - The updated list.
+ * @returns An array of tuples representing added items and a '+' change.
  */
 export function findRemoved(
-  map1: Map<string, Priority>,
-  map2: Map<string, Priority>,
+  list1: string[],
+  list2: string[],
 ): [string, Change][] {
   const removed: [string, Change][] = [];
-  map1.forEach((_, name) => {
-    if (!map2.has(name)) {
+  list1.map((name) => {
+    if (!list2.includes(name)) {
       removed.push([name, '-']);
     }
   });
@@ -44,28 +46,32 @@ export function findRemoved(
 }
 
 /**
- * Doc string
- * @param names - An array of data stream names
- * @returns A promise that resolves to an array of priority objects.
+ * Compares two lists of items and returns a map of changes.
+ * Identifies added and removed items based on the difference between the original and updated lists.
+ * @param {string[]} list1 - The original list of items.
+ * @param {string[]} list2 - The updated list of items.
+ * @returns A Map where each key is the item name and the value is a Change ('+' for added, '-' for removed).
  */
 export function findChanges(
-  map1: Map<string, Priority>,
-  map2: Map<string, Priority>,
+  list1: string[],
+  list2: string[],
 ): Map<string, Change> {
-  return new Map([...findAdded(map1, map2), ...findRemoved(map1, map2)]);
+  return new Map([...findAdded(list1, list2), ...findRemoved(list1, list2)]);
 }
 
 /**
- * Doc string
- * @param names - An array of data stream names
- * @returns A promise that resolves to an array of priority objects.
+ * Generates a PUT watcher request string for updated data stream watches.
+ * @param {WatcherGetWatchResponse} watcher - The original watcher object.
+ * @param {Map<string, Priority>} updatedPriorityMap - A map of data stream names to their assigned priority levels.
+ * @returns {string} A formatted string to update the watcher via Elasticsearch's `_watcher/watch` endpoint.
  */
-export function generatePutWatcherRequest(
+export function generateDataStreamPutWatcherRequest(
+  priorityLevel: string,
   watcher: WatcherGetWatchResponse,
   updatedPriorityMap: Map<string, Priority>,
 ): string {
   const indices = Array.from(updatedPriorityMap.entries())
-    .filter(([, priority]) => priority === 'Medium')
+    .filter(([, priority]) => priority === priorityLevel)
     .map(([index]) => index);
 
   const updatedWatcher = {
@@ -80,10 +86,4 @@ export function generatePutWatcherRequest(
     },
   };
   return `PUT _watcher/watch/${watcher._id}\n${JSON.stringify(updatedWatcher, null, 1)}`;
-}
-
-// edge case turn pages needs to reset changes??????
-
-export function add(x: number, y: number) {
-  return x + y;
 }
