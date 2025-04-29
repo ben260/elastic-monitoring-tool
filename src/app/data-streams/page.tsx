@@ -15,7 +15,7 @@ export default async function Page(): Promise<React.ReactNode> {
   let lowWatcher: WatcherGetWatchResponse;
 
   try {
-    if (!client) throw new Error('Elastic error');
+    if (!client) return [];
     highWatcher = await client.watcher.getWatch({
       id: process.env.HIGH_DATASTREAM_WATCHER_ID ?? '',
     });
