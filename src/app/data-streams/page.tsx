@@ -114,3 +114,5 @@ export default async function Page(): Promise<React.ReactNode> {
     </div>
   );
 }
+
+export const dynamic = 'force-dynamic';
