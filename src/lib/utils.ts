@@ -14,8 +14,8 @@ export function cn(...inputs: ClassValue[]) {
  * @returns An array of tuples representing added items and a '+' change.
  */
 export function findAdded(
-  list1: string[], // original list
-  list2: string[], // updated list
+  list1: string[],
+  list2: string[],
 ): [string, Change][] {
   const added: [string, Change][] = [];
   list2.map((name) => {
@@ -65,6 +65,7 @@ export function findChanges(
  * @param {Map<string, Priority>} updatedPriorityMap - A map of data stream names to their assigned priority levels.
  * @returns {string} A formatted string to update the watcher via Elasticsearch's `_watcher/watch` endpoint.
  */
+
 export function generateDataStreamPutWatcherRequest(
   priorityLevel: string,
   watcher: WatcherGetWatchResponse,
@@ -86,4 +87,78 @@ export function generateDataStreamPutWatcherRequest(
     },
   };
   return `PUT _watcher/watch/${watcher._id}\n${JSON.stringify(updatedWatcher, null, 1)}`;
+}
+
+/**
+ * Generates a PUT watcher request string for updated agent watches.
+ * @param {WatcherGetWatchResponse} watcher - The original watcher object.
+ * @param {Map<string, Priority>} updatedPriorityMap - A map of data stream names to their assigned priority levels.
+ * @returns {string} A formatted string to update the watcher via Elasticsearch's `_watcher/watch` endpoint.
+ */
+export function generateAgentPutWatcherRequest(
+  priorityLevel: string,
+  watcher: WatcherGetWatchResponse,
+  updatedPriorityMap: Map<string, Priority>,
+): string {
+  const terms2 = Array.from(updatedPriorityMap.entries())
+    .filter(([, priority]) => priority === priorityLevel)
+    .map(([index]) => index);
+
+  console.log(watcher);
+
+  if (
+    !Array.isArray(
+      watcher.watch?.input.search?.request.body?.query.bool?.filter,
+    )
+  ) {
+    return 'error';
+  }
+  const oldFilters =
+    watcher.watch?.input.search?.request.body?.query.bool?.filter ?? [];
+
+  const updatedFilters = [
+    ...oldFilters.filter((f) => {
+      return !(
+        typeof f === 'object' &&
+        f !== null &&
+        'terms' in f &&
+        typeof f.terms === 'object' &&
+        'host.name' in f.terms
+      );
+    }),
+    {
+      terms: {
+        'host.name': terms2,
+      },
+    },
+  ];
+
+  const updatedWatcher = {
+    ...watcher.watch,
+    input: {
+      search: {
+        request: {
+          ...watcher.watch?.input.search?.request,
+          body: {
+            ...watcher.watch.input.search.request.body,
+            query: {
+              bool: {
+                filter: updatedFilters,
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+  return `PUT _watcher/watch/${watcher._id}\n${JSON.stringify(updatedWatcher, null, 1)}`;
+}
+
+export function formatDate(date: Date): string {
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const yy = String(date.getFullYear()).slice(-2);
+  const hh = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  return `${dd}/${mm}/${yy} ${hh}:${min}`;
 }

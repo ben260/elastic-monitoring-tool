@@ -19,6 +19,36 @@ export type Change = '+' | '-';
 export type DataStreamTableItem = IndicesDataStream & {
   priority: Priority;
   colour: ReactNode;
+  name: string;
 };
 
 export type TabEntry = [string, Map<string, Change>, WatcherGetWatchResponse][];
+
+export type AgentTableItem = AgentResponse & {
+  colour: string;
+  priority: string;
+};
+
+export type AgentResponse = {
+  _index: string;
+  _id: string;
+  _score: number;
+  _source: {
+    united: {
+      agent: {
+        enrolled_at: string;
+        policy_id: string;
+        last_checkin_status: string;
+        local_metadata: {
+          os: {
+            name: string;
+          };
+          host: {
+            hostname: string;
+          };
+        };
+        last_checkin: string;
+      };
+    };
+  };
+};

@@ -11,7 +11,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
 
 export const metadata: Metadata = {
-  title: 'Elastic Alert Manager',
+  title: 'Elastic Monitoring Tool',
   description: '',
 };
 

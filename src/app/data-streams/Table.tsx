@@ -20,7 +20,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { DataTablePagination } from './Pagination';
+import { DataTablePagination } from '../../components/Pagination';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {

@@ -27,12 +27,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { DataStreamTableItem, Priority } from '../types';
+import { AgentTableItem, Priority } from '../types';
 import { priorities } from '../constants';
+import { formatDate } from '@/lib/utils';
 
-export const columns: ColumnDef<DataStreamTableItem>[] = [
+export const columns: ColumnDef<AgentTableItem>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -56,14 +57,62 @@ export const columns: ColumnDef<DataStreamTableItem>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'name',
-    header: 'Name',
+    id: 'hostname',
+    accessorFn: (row) => row._source.united.agent.local_metadata.host.hostname,
+    header: 'Hostname',
+    cell: ({ row }) => {
+      return row.original._source.united.agent.local_metadata.host.hostname;
+    },
   },
   {
-    id: 'status',
-    header: 'Status',
+    id: 'os',
+    accessorFn: (row) => row._source.united.agent.local_metadata.os.name,
+    header: 'OS',
     cell: ({ row }) => {
-      return row.original.colour;
+      return row.original._source.united.agent.local_metadata.os.name;
+    },
+  },
+  {
+    id: 'checkin',
+    accessorFn: (row) => row._source.united.agent.last_checkin,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Last Checkin
+          <ArrowUpDown className='ml-2 h-4 w-4 hover:cursor-grab' />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <>
+          {formatDate(new Date(row.original._source.united.agent.last_checkin))}
+        </>
+      );
+    },
+  },
+  {
+    accessorKey: 'enrolled',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Enrolled at
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <>
+          {formatDate(new Date(row.original._source.united.agent.enrolled_at))}
+        </>
+      );
     },
   },
   {
@@ -75,14 +124,14 @@ export const columns: ColumnDef<DataStreamTableItem>[] = [
           <Select
             onValueChange={(value) => {
               table.options.meta!.updatePriority(
-                row.original.name,
+                row.original._source.united.agent.local_metadata.host.hostname,
                 value as Priority,
               );
             }}
           >
             <SelectTrigger
               className='h-8 w-40'
-              id={`${row.original.name}-reviewer`}
+              id={`${row.original._source.united.agent.local_metadata.host.hostname}-reviewer`}
             >
               <SelectValue placeholder={row.original.priority} />
             </SelectTrigger>
@@ -127,15 +176,17 @@ export const columns: ColumnDef<DataStreamTableItem>[] = [
 
           <DialogContent className='sm:max-w-md'>
             <DialogHeader>
-              <DialogTitle>{row.original.name}</DialogTitle>
-              <DialogDescription>View data stream object</DialogDescription>
+              <DialogTitle>
+                {row.original._source.united.agent.local_metadata.host.hostname}
+              </DialogTitle>
+              <DialogDescription>View agent object</DialogDescription>
             </DialogHeader>
             <div className='flex items-center space-x-2'>
               <div className='grid max-h-96 flex-1 gap-2 overflow-y-auto'>
                 <DynamicReactJson
                   src={row.original ?? { fallback: 'fallback' }}
                   name={false}
-                  //collapsed={1}
+                  //collapsed={fa}
                   enableClipboard={true}
                   displayDataTypes={false}
                   style={{
