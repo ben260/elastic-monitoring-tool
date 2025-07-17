@@ -5,7 +5,7 @@
 ![Demo](/datastreamspage.png 'Demo')
 
 <br>
-<p align="center">Lightweight, self-hosted utility built with Next.js that helps you monitor unresponsive Elasticsearch Agents and Data Streams by setting up and managing Elastic Watches. It prioritizes alerts into Low, Medium, and High categories and provides interactive tables for viewing and managing your alert setups. The tool automatically generates ready-to-use Watcher API requests for easy alert updates via Kibana’s Dev Tools Console, making it simpler and faster to set up reliable monitoring for data sources at scale.</p>
+<p align="center">Lightweight, self-hosted utility built with Next.js that helps you monitor unresponsive Elasticsearch Agents and Data Streams by setting up and managing Elastic Watches. It prioritises alerts into Low, Medium, and High categories and provides interactive tables for viewing and managing your alert setups. The tool automatically generates ready-to-use Watcher API requests for easy alert updates via Kibana’s Dev Tools Console, making it simpler and faster to set up reliable monitoring for data sources at scale.</p>
 
 
 
