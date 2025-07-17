@@ -1,4 +1,7 @@
-# Elastic Monitoring Tool - Set up alerts for unresponsive Elasticsearch Agents and Data Streams
+<h1 align="center">Elastic Monitoring Tool</h1>
+<p align="center"><em>Set up alerts for unresponsive Elasticsearch Agents and Data Streams</em></p>
+
+<p></p>
 
 **Elastic Monitoring Tool** is a lightweight utility to help you set up Elastic Watches for detecting unresponsive Elasticsearch Agents and Data Streams.
 
@@ -28,8 +31,6 @@
 
 `git clone https://github.com/ben260/elastic-monitoring-tool.git`
 
-If you don't have git installed then you can download a ZIP file from this repository.
-
 ### Install dependencies using the NPM package manager
 
 `npm install`
@@ -49,3 +50,14 @@ This will create a production ready build of the application.
 `npm run start`
 
 The application should now be running at [http://localhost:3000](http://localhost:3000)
+
+## 💬 Feedback & Contributions
+
+If you find this tool useful or have ideas for improvement, I’d love to hear from you.
+
+- Submit an issue or feature request [here](https://github.com/ben260/elastic-monitoring-tool/issues)
+- Or reach out via email: benharris146@gmail.com
+
+If this project helps you, please consider ⭐ starring the repo.  
+
+Contributions are welcome!
