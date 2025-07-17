@@ -1,8 +1,6 @@
-# elastic-monitoring-tool
+# Elastic Monitoring Tool - Set up alerts for unresponsive Elasticsearch Agents and Data Streams
 
-# Elasticsearch Monitoring Tool
-
-A monitoring tool built with **Next.js** to detect unavailable **Elasticsearch Data Streams and Agents**.
+**Elastic Monitoring Tool** is a lightweight utility to help you set up Elastic Watches for detecting unresponsive Elasticsearch Agents and Data Streams.
 
 ## Features
 
