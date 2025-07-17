@@ -1,7 +1,9 @@
 <h1 align="center">Elastic Monitoring Tool</h1>
 <p align="center"><em>Set up alerts for unresponsive Elasticsearch Agents and Data Streams</em></p>
 
-<p></p>
+![Demo](/datastreamspage.png 'Demo')
+
+<p align="center">Lightweight, self-hosted utility built with Next.js that helps you monitor unresponsive Elasticsearch Agents and Data Streams by setting up and managing Elastic Watches. It prioritizes alerts into Low, Medium, and High categories and provides interactive tables for viewing and managing your alert setups. The tool automatically generates ready-to-use Watcher API requests for easy alert updates via Kibana’s Dev Tools Console, making it simpler and faster to set up reliable monitoring for data sources at scale.</p>
 
 **Elastic Monitoring Tool** is a lightweight utility to help you set up Elastic Watches for detecting unresponsive Elasticsearch Agents and Data Streams.
 
@@ -58,6 +60,6 @@ If you find this tool useful or have ideas for improvement, I’d love to hear f
 - Submit an issue or feature request [here](https://github.com/ben260/elastic-monitoring-tool/issues)
 - Or reach out via email: benharris146@gmail.com
 
-If this project helps you, please consider ⭐ starring the repo.  
+If this project helps you, please consider ⭐ starring the repo.
 
 Contributions are welcome!
