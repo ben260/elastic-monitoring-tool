@@ -16,7 +16,7 @@
 <h2>Features</h2>
 <ul>
   <li>
-    <strong>Monitors Elasticsearch Data Streams and Agents using Elastic Elastic [Watches](https://www.elastic.co/docs/explore-analyze/alerts-cases/watcher/how-watcher-works) .</strong><br>
+    <strong>Monitors Elasticsearch Data Streams and Agents using Elastic Elastic Watches.</strong><br>
     <em>Stay informed about the health of your data sources to avoid unexpected data loss.</em>
   </li>
   <li>
