@@ -13,6 +13,24 @@
 
 ## Features
 
+<h2>Features</h2>
+<ul>
+  <li>
+    <strong>Monitors Elasticsearch Data Streams and Agents using Elastic Elastic [Watches](https://www.elastic.co/docs/explore-analyze/alerts-cases/watcher/how-watcher-works).</strong><br>
+    <em>Stay informed about the health of your data sources to avoid unexpected data loss.</em>
+  </li>
+  <li>
+    <strong>Categorises watches into three priority levels: High, Medium, Low</strong><br>
+    <em>Helps you focus on the most critical issues first and reduces alert fatigue by organizing alerts by severity.</em>
+  </li>
+  <li>
+    <strong>Automatically generates updated Elasticsearch Watcher API requests when priorities are changed</strong><br>
+    <em>Saves time and eliminates errors by providing ready-to-use API requests for quick updates via Kibana’s Dev Tools Console.</em>
+  </li>
+</ul>
+
+
+
 - Monitors Elasticsearch Data Streams and Agents using Elastic [Watches](https://www.elastic.co/docs/explore-analyze/alerts-cases/watcher/how-watcher-works).
 - Categorises watches into three priority levels:
   - High
