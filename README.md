@@ -55,11 +55,10 @@ The application should now be running at [http://localhost:3000](http://localhos
 
 ## 💬 Feedback & Contributions
 
-If you find this tool useful or have ideas for improvement, I’d love to hear from you.
+If this tool saves you time or you have ideas for improvement, let me know!
 
-- Submit an issue or feature request [here](https://github.com/ben260/elastic-monitoring-tool/issues)
-- Or reach out via email: benharris146@gmail.com
+⭐ Star this repo to support it
 
-If this project helps you, please consider ⭐ starring the repo.
+🐛 Submit issues and feature requests [here](https://github.com/ben260/elastic-monitoring-tool/issues)
 
-Contributions are welcome!
+📬 Reach out: benharris146@gmail.com
