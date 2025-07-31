@@ -15,12 +15,12 @@
 
 <ul>
   <li>
-    <strong>Monitors Elasticsearch Data Streams and Agents using Elastic Elastic Watches.</strong><br>
+    <strong>Monitors Elasticsearch Data Streams and Agents using Elastic Watches.</strong><br>
     <em>Stay informed about the health of your data sources to avoid unexpected data loss.</em>
   </li>
   <li>
     <strong>Categorises watches into three priority levels: High, Medium, Low</strong><br>
-    <em>Helps you focus on the most critical issues first and reduces alert fatigue by organizing alerts by severity.</em>
+    <em>Helps you focus on the most critical issues first and reduces alert fatigue by organising alerts by severity.</em>
   </li>
   <li>
     <strong>Provides an intuitive, interactive web UI</strong><br>
