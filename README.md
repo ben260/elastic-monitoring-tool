@@ -13,7 +13,6 @@
 
 ## Features
 
-<h2>Features</h2>
 <ul>
   <li>
     <strong>Monitors Elasticsearch Data Streams and Agents using Elastic Elastic Watches.</strong><br>
@@ -24,9 +23,14 @@
     <em>Helps you focus on the most critical issues first and reduces alert fatigue by organizing alerts by severity.</em>
   </li>
   <li>
+    <strong>Provides an intuitive, interactive web UI</strong><br>
+    <em>Makes it easy to view, edit, and manage alert setups without needing to keep track of the watches manually.</em>
+  </li>
+  <li>
     <strong>Automatically generates updated Elasticsearch Watcher API requests when priorities are changed</strong><br>
     <em>Saves time and eliminates errors by providing ready-to-use API requests for quick updates via Kibana’s Dev Tools Console.</em>
   </li>
+  
 </ul>
 
 ## How to Use
