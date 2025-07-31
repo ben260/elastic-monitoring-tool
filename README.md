@@ -1,5 +1,5 @@
 <h1 align="center">Elastic Monitoring Tool</h1>
-<p align="center"><em>Set up alerts for unresponsive Elasticsearch Agents and Data Streams</em></p>
+<p align="center"><em>Avoid silent data failures. Set up and manage Elastic Watches to monitor unresponsive Elasticsearch Agents and Data Streams with this fast, simple, self-hosted web tool.</em></p>
 <br>
 
 ![Demo](/datastreamspage.png 'Demo')
