@@ -1,21 +1,37 @@
 <h1 align="center">Elastic Monitoring Tool</h1>
-<p align="center"><em>Set up alerts for unresponsive Elasticsearch Agents and Data Streams</em></p>
+<p align="center"><em>Avoid silent data failures. Set up and manage Elastic Watches to monitor unresponsive Elasticsearch Agents and Data Streams with this fast, simple, self-hosted web tool.</em></p>
 <br>
 
 ![Demo](/datastreamspage.png 'Demo')
 
 <br>
-<p align="center">Lightweight, self-hosted utility built with Next.js that helps you monitor unresponsive Elasticsearch Agents and Data Streams by setting up and managing Elastic Watches. It prioritises alerts into Low, Medium, and High categories and provides interactive tables for viewing and managing your alert setups. The tool automatically generates ready-to-use Watcher API requests for easy alert updates via Kibana’s Dev Tools Console, making it simpler and faster to set up reliable monitoring for data sources at scale.</p>
+<p align="center">
+  
+  This lightweight, self-hosted utility built with Next.js helps you quickly spot and manage unresponsive Elasticsearch Agents and Data Streams, so you don’t miss important issues. It uses Elastic Watches, prioritising alerts into Low, Medium, and High levels to help prevent alert fatigue. The interactive tables make managing alerts simple, and the tool automatically creates ready-to-use Watcher API requests to speed up updates in Kibana’s Dev Tools Console. This way, setting up and maintaining monitoring at scale is more efficient and less error-prone.
+  
+</p>
 
 ## Features
 
-- Monitors Elasticsearch Data Streams and Agents using Elastic [Watches](https://www.elastic.co/docs/explore-analyze/alerts-cases/watcher/how-watcher-works).
-- Categorises watches into three priority levels:
-  - High
-  - Medium
-  - Low
-- Automatically generates updated **Elasticsearch Watcher API requests** when
-  priorities are updated which are ready to use in **Kibana's Dev Tools Console**
+<ul>
+  <li>
+    <strong>Monitors Elasticsearch Data Streams and Agents using Elastic Watches.</strong><br>
+    <em>Stay informed about the health of your data sources to avoid unexpected data loss.</em>
+  </li>
+  <li>
+    <strong>Categorises watches into three priority levels: High, Medium, Low</strong><br>
+    <em>Helps you focus on the most critical issues first and reduces alert fatigue by organising alerts by severity.</em>
+  </li>
+  <li>
+    <strong>Provides an intuitive, interactive web UI</strong><br>
+    <em>Makes it easy to view, edit, and manage alert setups without needing to keep track of the watches manually.</em>
+  </li>
+  <li>
+    <strong>Automatically generates updated Elasticsearch Watcher API requests when priorities are changed</strong><br>
+    <em>Saves time and eliminates errors by providing ready-to-use API requests for quick updates via Kibana’s Dev Tools Console.</em>
+  </li>
+  
+</ul>
 
 ## How to Use
 
@@ -55,11 +71,10 @@ The application should now be running at [http://localhost:3000](http://localhos
 
 ## 💬 Feedback & Contributions
 
-If you find this tool useful or have ideas for improvement, I’d love to hear from you.
+If this tool saves you time or you have ideas for improvement, let me know!
 
-- Submit an issue or feature request [here](https://github.com/ben260/elastic-monitoring-tool/issues)
-- Or reach out via email: benharris146@gmail.com
+⭐ Star this repo to support it
 
-If this project helps you, please consider ⭐ starring the repo.
+🐛 Submit issues and feature requests [here](https://github.com/ben260/elastic-monitoring-tool/issues)
 
-Contributions are welcome!
+📬 Reach out: benharris146@gmail.com
