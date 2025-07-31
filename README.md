@@ -29,16 +29,6 @@
   </li>
 </ul>
 
-
-
-- Monitors Elasticsearch Data Streams and Agents using Elastic [Watches](https://www.elastic.co/docs/explore-analyze/alerts-cases/watcher/how-watcher-works).
-- Categorises watches into three priority levels:
-  - High
-  - Medium
-  - Low
-- Automatically generates updated **Elasticsearch Watcher API requests** when
-  priorities are updated which are ready to use in **Kibana's Dev Tools Console**
-
 ## How to Use
 
 1. Create High, Medium, and Low priority Watches for both Agents and Datastreams.
