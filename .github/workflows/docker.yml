@@ -22,6 +22,6 @@ jobs:
         with:
           push: true
           tags: |
-            ben260/elastic-monitoring-tool:${{ env.VERSION }}
+            ben260/elastic-monitoring-tool:${{ github.ref_name }}
             ben260/elastic-monitoring-tool:latest
           platforms: linux/amd64,linux/arm64
