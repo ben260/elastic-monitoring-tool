@@ -8,6 +8,8 @@ import { DataStreamTableItem, Priority } from '../types';
 import { DataStreamTable } from './Table';
 import client from '@/lib/elastic';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page(): Promise<React.ReactNode> {
   let data: DataStreamTableItem[];
   let highWatcher: WatcherGetWatchResponse;

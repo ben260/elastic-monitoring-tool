@@ -7,7 +7,7 @@ import {
   QueryDslQueryContainer,
   SearchResponse,
 } from '@elastic/elasticsearch/lib/api/typesWithBodyKey';
-
+export const dynamic = 'force-dynamic';
 export default async function Page(): Promise<React.ReactNode> {
   let data: AgentTableItem[];
   let highWatcher: WatcherGetWatchResponse;
