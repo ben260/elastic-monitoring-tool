@@ -54,4 +54,5 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: user/app:latest
+          tags: ben260/elastic-monitoring-tool:latest
+          platforms: linux/amd64,linux/arm64
